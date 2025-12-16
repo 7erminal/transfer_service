@@ -22,7 +22,7 @@ func HubtelTransferToAccount(c *beego.Controller, req requests.TransferApiReques
 	request := api.NewRequest(
 		host,
 		"/"+salesId,
-		api.GET)
+		api.POST)
 	request.HeaderField["Authorization"] = "Basic " + authorizationKey
 
 	request.InterfaceParams["Description"] = req.Description
@@ -34,7 +34,7 @@ func HubtelTransferToAccount(c *beego.Controller, req requests.TransferApiReques
 	// request.Params = {"UserId": strconv.Itoa(int(userid))}
 	client := api.Client{
 		Request: request,
-		Type_:   "params",
+		Type_:   "body",
 	}
 	res, err := client.SendRequest()
 	if err != nil {

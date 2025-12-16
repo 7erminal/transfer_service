@@ -37,6 +37,8 @@ func (c *Client) SendRequest() (*http.Response, error) {
 			beegoRequest.Param(key, value)
 		}
 	} else if c.Type_ == "body" {
+		reqText := []byte{}
+		logs.Info("Request type is body")
 		if c.Request.InterfaceParams == nil {
 			logs.Info("Interface params are nil")
 			beegoRequest.JSONBody(c.Request.Params)
@@ -44,6 +46,8 @@ func (c *Client) SendRequest() (*http.Response, error) {
 			logs.Info("Interface params are not nil")
 			beegoRequest.JSONBody(c.Request.InterfaceParams)
 		}
+
+		logs.Info("Request to third party is ", string(reqText))
 	}
 
 	beegoRequest.Debug(true)
