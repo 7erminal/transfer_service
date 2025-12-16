@@ -160,7 +160,7 @@ func (c *TransferController) TransferCommission() {
 					// Successfully added transaction details
 					logs.Info("Commission transaction details added successfully")
 
-					if callbackUrl, err := models.GetApplication_propertyByCode("TRANSFER_TO_ACCOUNT_CALLBACK_URL"); err == nil {
+					if callbackUrl, err := models.GetApplication_propertyByCode("HUBTEL_TRANSFER_TO_ACCOUNT_CALLBACK_URL"); err == nil {
 						req := requests.TransferApiRequest{
 							ClientRefernce:           trx_transaction.TransactionId,
 							Amount:                   v.Amount,
