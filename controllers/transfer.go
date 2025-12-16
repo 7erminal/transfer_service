@@ -66,22 +66,24 @@ func (c *TransferController) Post() {
 		}
 
 		if _, err := models.AddTrx_transactions(&trx_transaction); err == nil {
+			trx_details_id := "TRXDTL" + strconv.FormatInt(time.Now().Unix(), 10) + "." + v.RequestId
 			trx_transactionDetails := models.Trx_transaction_details{
-				TransactionDescription: v.Description,
-				TransactionId:          &trx_transaction,
-				Amount:                 v.Amount,
-				Charge:                 v.Charge,
-				Commission:             v.Commission,
-				Sender:                 v.SenderAccountNumber,
-				Recipient:              v.RecipientAccountNumber,
-				Status:                 status,
-				ResponseCode:           "",
-				RecipientName:          v.RecipientName,
-				DateCreated:            time.Now(),
-				DateModified:           time.Now(),
-				CreatedBy:              1,
-				ModifiedBy:             1,
-				Active:                 1,
+				Trx_transactionDetailsId: trx_details_id,
+				TransactionDescription:   v.Description,
+				TransactionId:            &trx_transaction,
+				Amount:                   v.Amount,
+				Charge:                   v.Charge,
+				Commission:               v.Commission,
+				Sender:                   v.SenderAccountNumber,
+				Recipient:                v.RecipientAccountNumber,
+				Status:                   status,
+				ResponseCode:             "",
+				RecipientName:            v.RecipientName,
+				DateCreated:              time.Now(),
+				DateModified:             time.Now(),
+				CreatedBy:                1,
+				ModifiedBy:               1,
+				Active:                   1,
 			}
 			responseCode = 200
 			responseMessage = "Transfer created successfully"
@@ -134,22 +136,24 @@ func (c *TransferController) TransferCommission() {
 			trx_transaction.Commission = v.Commission
 
 			if err := models.UpdateTrx_transactionsById(trx_transaction); err == nil {
+				trx_details_id := "TRXDTL" + strconv.FormatInt(time.Now().Unix(), 10) + "." + v.RequestId
 				trx_transactionDetails := models.Trx_transaction_details{
-					TransactionDescription: "Commission Transfer for Transaction ID " + v.TransactionId,
-					TransactionId:          trx_transaction,
-					Amount:                 v.Amount,
-					Charge:                 v.Charge,
-					Commission:             v.Commission,
-					Sender:                 v.SenderAccountNumber,
-					Recipient:              v.RecipientAccountNumber,
-					Status:                 status,
-					ResponseCode:           "",
-					RecipientName:          "Commission Wallet",
-					DateCreated:            time.Now(),
-					DateModified:           time.Now(),
-					CreatedBy:              1,
-					ModifiedBy:             1,
-					Active:                 1,
+					Trx_transactionDetailsId: trx_details_id,
+					TransactionDescription:   "Commission Transfer for Transaction ID " + v.TransactionId,
+					TransactionId:            trx_transaction,
+					Amount:                   v.Amount,
+					Charge:                   v.Charge,
+					Commission:               v.Commission,
+					Sender:                   v.SenderAccountNumber,
+					Recipient:                v.RecipientAccountNumber,
+					Status:                   status,
+					ResponseCode:             "",
+					RecipientName:            "Commission Wallet",
+					DateCreated:              time.Now(),
+					DateModified:             time.Now(),
+					CreatedBy:                1,
+					ModifiedBy:               1,
+					Active:                   1,
 				}
 
 				if _, err := models.AddTrx_transaction_details(&trx_transactionDetails); err == nil {

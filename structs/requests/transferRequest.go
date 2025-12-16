@@ -24,6 +24,7 @@ type TransferRequest struct {
 
 type TransferCommissionRequest struct {
 	TransactionId          string
+	RequestId              string
 	Amount                 float64
 	Charge                 float64
 	Commission             float64
