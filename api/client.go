@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 	"os"
 
@@ -27,6 +28,7 @@ func (c *Client) SendRequest() (*http.Response, error) {
 		fileInfo, err := os.Stat(value)
 		if err != nil {
 			logs.Error("Error accessing file:", err)
+			value = ""
 		} else {
 			logs.Info("File size:", fileInfo.Size())
 		}
@@ -36,21 +38,27 @@ func (c *Client) SendRequest() (*http.Response, error) {
 		for key, value := range c.Request.Params {
 			beegoRequest.Param(key, value)
 		}
+
+		// logs.Info("Request to third party is ", string(beegoRequest.Param))
 	} else if c.Type_ == "body" {
 		reqText := []byte{}
 		logs.Info("Request type is body")
 		if c.Request.InterfaceParams == nil {
 			logs.Info("Interface params are nil")
 			beegoRequest.JSONBody(c.Request.Params)
+
+			reqText, _ = json.Marshal(c.Request.Params)
 		} else {
 			logs.Info("Interface params are not nil")
 			beegoRequest.JSONBody(c.Request.InterfaceParams)
+
+			reqText, _ = json.Marshal(c.Request.InterfaceParams)
 		}
+
+		// reqText, _ = json.Marshal(c.Request.InterfaceParams)
 
 		logs.Info("Request to third party is ", string(reqText))
 	}
-
-	beegoRequest.Debug(true)
 
 	res, err := beegoRequest.Response()
 	if err != nil {
