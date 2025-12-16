@@ -11,7 +11,7 @@ import (
 )
 
 type Trx_transaction_details struct {
-	Trx_transactionDetailsId string            `orm:"pk;column(transaction_details_id)"`
+	Trx_transactionDetailsId string            `orm:"pk;column(trx_transaction_details_id)"`
 	TransactionDescription   string            `orm:"size(255)"`
 	TransactionId            *Trx_transactions `orm:"rel(fk)"`
 	Amount                   float64
