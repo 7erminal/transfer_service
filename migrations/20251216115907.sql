@@ -1,0 +1,2 @@
+-- Modify "trx_transaction_details" table
+ALTER TABLE `trx_transaction_details` DROP COLUMN `id`, DROP COLUMN `transaction_id`, DROP COLUMN `status`, ADD COLUMN `transaction_details_id` varchar(255) NOT NULL FIRST, ADD COLUMN `transaction_description` varchar(255) NOT NULL DEFAULT "" AFTER `transaction_details_id`, ADD COLUMN `transaction_id_id` varchar(255) NOT NULL AFTER `transaction_description`, ADD COLUMN `status_id` bigint NOT NULL AFTER `recipient`, DROP PRIMARY KEY, ADD PRIMARY KEY (`transaction_details_id`);

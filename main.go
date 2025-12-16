@@ -1,0 +1,48 @@
+package main
+
+import (
+	// "fmt"
+	// "io"
+	// "os"
+	_ "transfer_service/routers"
+
+	// "ariga.io/atlas-provider-beego/beegoschema"
+	"github.com/beego/beego/v2/client/orm"
+	"github.com/beego/beego/v2/core/logs"
+	beego "github.com/beego/beego/v2/server/web"
+	"github.com/beego/beego/v2/server/web/filter/cors"
+	_ "github.com/go-sql-driver/mysql"
+)
+
+func main() {
+	sqlConn, err := beego.AppConfig.String("sqlconn")
+	if err != nil {
+		logs.Error("%s", err)
+	}
+	orm.RegisterDataBase("default", "mysql", sqlConn)
+	logs.SetLogger(logs.AdapterFile, `{"filename":"../logs/transfer_service.log"}`)
+
+	// stmts, err := beegoschema.New("mysql").Load()
+	// if err != nil {
+	// 	fmt.Fprintf(os.Stderr, "failed to load beego schema: %v\n", err)
+	// 	os.Exit(1)
+	// }
+	// io.WriteString(os.Stdout, stmts)
+
+	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8000", "http://13.40.60.131", "http://13.40.60.131:8001", "http://167.86.115.44:8002", "makufoodsltd.com", "makufoodsltd.net", "https://makufoodsltd.net", "https://www.makufoodsltd.net", "https://www.makufoodsltd.com", "https://makufoodsltd.com", "https://admin.bridgeafrica.group"},
+		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
+	if beego.BConfig.RunMode == "dev" {
+		beego.BConfig.WebConfig.DirectoryIndex = true
+		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
+	}
+
+	orm.Debug = true
+
+	beego.Run()
+}
