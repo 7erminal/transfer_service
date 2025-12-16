@@ -18,6 +18,16 @@ func HubtelTransferToAccount(c *beego.Controller, req requests.TransferApiReques
 	authorizationKey, _ := beego.AppConfig.String("authorizationKeySales")
 
 	// serviceId, _ := helpers.GetServiceId(req.Network)
+	logs.Info("Sending transfer to account request for ", req.DestinationAccountNumber)
+	logs.Info("Callback URL is ", req.CallbackUrl)
+	logs.Info("Amount is ", req.Amount)
+	logs.Info("Client Reference is ", req.ClientRefernce)
+
+	reqText, _ := json.Marshal(req)
+
+	logs.Info("Request to process transfer to account: ", string(reqText))
+
+	logs.Info("URL:: ", host, "/", salesId)
 
 	request := api.NewRequest(
 		host,
