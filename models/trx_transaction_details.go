@@ -19,7 +19,7 @@ type Trx_transaction_details struct {
 	Commission               float64
 	Sender                   string    `orm:"size(255)"`
 	Recipient                string    `orm:"size(255)"`
-	Status                   *Status   `orm:"rel(fk)"`
+	Status                   *Status   `orm:"rel(fk);column(status)"`
 	ResponseCode             string    `orm:"size(50)"`
 	RecipientName            string    `orm:"size(255)"`
 	DateCreated              time.Time `orm:"type(datetime)"`

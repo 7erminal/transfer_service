@@ -19,7 +19,7 @@ type Trx_transactions struct {
 	SenderAccountNumber    string    `orm:"size(255)"`
 	RecipientAccountNumber string    `orm:"size(255)"`
 	TransferCode           string    `orm:"size(150)"`
-	Status                 *Status   `orm:"rel(fk)"`
+	Status                 *Status   `orm:"rel(fk);column(status_id)"`
 	ResponseCode           string    `orm:"size(50)"`
 	ResponseMessage        string    `orm:"size(255)"`
 	Description            string    `orm:"size(255)"`
