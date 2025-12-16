@@ -30,9 +30,9 @@ type Trx_transactions struct {
 	Active                 int
 }
 
-// func init() {
-// 	orm.RegisterModel(new(Trx_transactions))
-// }
+func init() {
+	orm.RegisterModel(new(Trx_transactions))
+}
 
 // AddTrx_transactions insert a new Trx_transactions into database and returns
 // last inserted Id on success.
