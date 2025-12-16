@@ -1,5 +1,7 @@
 package responses
 
+import "transfer_service/models"
+
 type TransferResponseApiData struct {
 	ClientRefernce string  `json:"clientReference"`
 	Amount         float64 `json:"amount"`
@@ -25,7 +27,7 @@ type TransferResponseData struct {
 }
 
 type TransferResponseDTO struct {
-	StatusCode int                   `json:"success"`
-	StatusDesc string                `json:"statusDesc"`
-	Result     *TransferResponseData `json:"result"`
+	StatusCode int                      `json:"success"`
+	StatusDesc string                   `json:"statusDesc"`
+	Result     *models.Trx_transactions `json:"result"`
 }

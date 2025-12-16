@@ -41,7 +41,7 @@ func (c *TransferController) Post() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	responseCode := 401
 	responseMessage := "Error processing request"
-	result := responses.TransferResponseData{}
+	result := models.Trx_transactions{}
 
 	if status, err := models.GetStatusByName(v.Status); err == nil {
 		// Generate a unique transaction ID (you can customize this as needed)
@@ -84,6 +84,7 @@ func (c *TransferController) Post() {
 			}
 			responseCode = 200
 			responseMessage = "Transfer created successfully"
+			result = trx_transaction
 
 			if _, err := models.AddTrx_transaction_details(&trx_transactionDetails); err == nil {
 				// Successfully added transaction details
@@ -124,7 +125,7 @@ func (c *TransferController) TransferCommission() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	responseCode := 401
 	responseMessage := "Error processing request"
-	result := responses.TransferResponseData{}
+	result := models.Trx_transactions{}
 
 	if status, err := models.GetStatusByName(v.Status); err == nil {
 		// Generate a unique transaction ID (you can customize this as needed)
@@ -167,6 +168,7 @@ func (c *TransferController) TransferCommission() {
 
 							responseCode = 200
 							responseMessage = "Commission transferred successfully"
+							result = *trx_transaction
 						} else {
 							// Handle error transferring commission
 							logs.Error("Error transferring commission to commission wallet: %v", err)

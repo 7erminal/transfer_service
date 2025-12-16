@@ -34,7 +34,7 @@ func (c *CallbackController) Post() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	responseCode := 401
 	responseMessage := "Error processing request"
-	result := responses.TransferResponseData{}
+	result := models.Trx_transactions{}
 
 	if status, err := models.GetStatusByName(v.Status); err == nil {
 		// Get Transaction by Transaction ID
@@ -49,6 +49,7 @@ func (c *CallbackController) Post() {
 					logs.Info("Transaction Updated")
 					responseCode = 200
 					responseMessage = "Transaction updated successfully"
+					result = *trxTransaction
 				} else {
 					logs.Error("Failed to update transaction ", err)
 					responseCode = 500
