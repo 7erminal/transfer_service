@@ -46,7 +46,7 @@ func (c *TransferController) Post() {
 
 	if status, err := models.GetStatusByName(v.Status); err == nil {
 		// Generate a unique transaction ID (you can customize this as needed)
-		transactionId := "TXN" + strconv.FormatInt(time.Now().Unix(), 10) + "." + v.RequestId
+		transactionId := "TXN" + strconv.FormatInt(time.Now().UnixMilli(), 10) + "." + v.RequestId
 
 		trx_transaction := models.Trx_transactions{
 			TransactionId:          transactionId,
@@ -66,7 +66,7 @@ func (c *TransferController) Post() {
 		}
 
 		if _, err := models.AddTrx_transactions(&trx_transaction); err == nil {
-			trx_details_id := "TRXDTL" + strconv.FormatInt(time.Now().Unix(), 10) + "." + v.RequestId
+			trx_details_id := "TRXDTL" + strconv.FormatInt(time.Now().UnixMilli(), 10) + "." + v.RequestId
 			trx_transactionDetails := models.Trx_transaction_details{
 				Trx_transactionDetailsId: trx_details_id,
 				TransactionDescription:   v.Description,
@@ -136,7 +136,7 @@ func (c *TransferController) TransferCommission() {
 			trx_transaction.Commission = v.Commission
 
 			if err := models.UpdateTrx_transactionsById(trx_transaction); err == nil {
-				trx_details_id := "TRXDTL" + strconv.FormatInt(time.Now().Unix(), 10) + "." + v.RequestId
+				trx_details_id := "TRXDTL" + strconv.FormatInt(time.Now().UnixMilli(), 10) + "." + v.RequestId
 				trx_transactionDetails := models.Trx_transaction_details{
 					Trx_transactionDetailsId: trx_details_id,
 					TransactionDescription:   "Commission Transfer for Transaction ID " + v.TransactionId,
