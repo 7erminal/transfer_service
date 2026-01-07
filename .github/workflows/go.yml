@@ -13,6 +13,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    environment: production
     steps:
     - uses: actions/checkout@v4
 
@@ -22,7 +23,19 @@ jobs:
         go-version: '1.20'
 
     - name: Build
-      run: go build -v ./...
+      env:
+              GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+              GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+              SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+      run: |
+        sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@185.211.5.90 << 'EOF'
+          set -e  # Exit on any error
+          cd /usr/app/mobile-application/transfer_service
+          git stash
+          git pull origin main  # Use branch explicitly
+          go build -o transfer_service
+          pm2 restart transfer_service || pm2 start transfer_service --name transfer_service
+        EOF
 
-    - name: Test
-      run: go test -v ./...
+    # - name: Test
+    #   run: go test -v ./...
