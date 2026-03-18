@@ -20,6 +20,7 @@ type TransferRequest struct {
 	Description            string
 	RecipientName          string
 	Status                 string
+	ServiceCode            string
 }
 
 type TransferCommissionRequest struct {

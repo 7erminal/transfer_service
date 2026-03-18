@@ -10,56 +10,65 @@ import (
 	"github.com/beego/beego/v2/client/orm"
 )
 
-type Trx_transactions struct {
-	TransactionId          string `orm:"pk"`
-	Amount                 float64
-	TotalDebitAmount       float64
-	Charge                 float64
-	Commission             float64
-	Service                *Services `orm:"rel(fk);column(service_id)"`
-	SenderAccountNumber    string    `orm:"size(255)"`
-	RecipientAccountNumber string    `orm:"size(255)"`
-	TransferCode           string    `orm:"size(150)"`
-	Status                 *Status   `orm:"rel(fk);column(status_id)"`
-	ResponseCode           string    `orm:"size(50)"`
-	ResponseMessage        string    `orm:"size(255)"`
-	Description            string    `orm:"size(255)"`
-	DateCreated            time.Time `orm:"type(datetime)"`
-	DateModified           time.Time `orm:"type(datetime)"`
-	CreatedBy              int
-	ModifiedBy             int
-	Active                 int
+type Services struct {
+	ServiceId          int64     `orm:"auto"`
+	ServiceName        string    `orm:"size(100)"`
+	ServiceCode        string    `orm:"size(100)"`
+	ServiceDescription string    `orm:"size(300)"`
+	DateCreated        time.Time `orm:"type(datetime)"`
+	DateModified       time.Time `orm:"type(datetime)"`
+	CreatedBy          int
+	ModifiedBy         int
+	Active             int
 }
 
 func init() {
-	orm.RegisterModel(new(Trx_transactions))
+	orm.RegisterModel(new(Services))
 }
 
-// AddTrx_transactions insert a new Trx_transactions into database and returns
+// AddServices insert a new Services into database and returns
 // last inserted Id on success.
-func AddTrx_transactions(m *Trx_transactions) (id int64, err error) {
+func AddServices(m *Services) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetTrx_transactionsById retrieves Trx_transactions by Id. Returns error if
+// GetServicesById retrieves Services by Id. Returns error if
 // Id doesn't exist
-func GetTrx_transactionsById(id string) (v *Trx_transactions, err error) {
+func GetServicesById(id int64) (v *Services, err error) {
 	o := orm.NewOrm()
-	v = &Trx_transactions{TransactionId: id}
-	if err = o.QueryTable(new(Trx_transactions)).Filter("TransactionId", id).RelatedSel().One(v); err == nil {
+	v = &Services{ServiceId: id}
+	if err = o.QueryTable(new(Services)).Filter("ServiceId", id).RelatedSel().One(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllTrx_transactions retrieves all Trx_transactions matches certain condition. Returns empty list if
+func GetServicesByName(name string) (v *Services, err error) {
+	o := orm.NewOrm()
+	v = &Services{ServiceName: name}
+	if err = o.QueryTable(new(Services)).Filter("ServiceName", name).RelatedSel().One(v); err == nil {
+		return v, nil
+	}
+	return nil, err
+}
+
+func GetServicesByCode(code string) (v *Services, err error) {
+	o := orm.NewOrm()
+	v = &Services{ServiceCode: code}
+	if err = o.QueryTable(new(Services)).Filter("ServiceCode", code).RelatedSel().One(v); err == nil {
+		return v, nil
+	}
+	return nil, err
+}
+
+// GetAllServices retrieves all Services matches certain condition. Returns empty list if
 // no records exist
-func GetAllTrx_transactions(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllServices(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(Trx_transactions))
+	qs := o.QueryTable(new(Services))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -105,7 +114,7 @@ func GetAllTrx_transactions(query map[string]string, fields []string, sortby []s
 		}
 	}
 
-	var l []Trx_transactions
+	var l []Services
 	qs = qs.OrderBy(sortFields...).RelatedSel()
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -128,11 +137,11 @@ func GetAllTrx_transactions(query map[string]string, fields []string, sortby []s
 	return nil, err
 }
 
-// UpdateTrx_transactions updates Trx_transactions by Id and returns error if
+// UpdateServices updates Services by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateTrx_transactionsById(m *Trx_transactions) (err error) {
+func UpdateServicesById(m *Services) (err error) {
 	o := orm.NewOrm()
-	v := Trx_transactions{TransactionId: m.TransactionId}
+	v := Services{ServiceId: m.ServiceId}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -143,15 +152,15 @@ func UpdateTrx_transactionsById(m *Trx_transactions) (err error) {
 	return
 }
 
-// DeleteTrx_transactions deletes Trx_transactions by Id and returns error if
+// DeleteServices deletes Services by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteTrx_transactions(id string) (err error) {
+func DeleteServices(id int64) (err error) {
 	o := orm.NewOrm()
-	v := Trx_transactions{TransactionId: id}
+	v := Services{ServiceId: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&Trx_transactions{TransactionId: id}); err == nil {
+		if num, err = o.Delete(&Services{ServiceId: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

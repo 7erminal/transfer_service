@@ -44,65 +44,72 @@ func (c *TransferController) Post() {
 	responseMessage := "Error processing request"
 	result := models.Trx_transactions{}
 
-	if status, err := models.GetStatusByName(v.Status); err == nil {
-		// Generate a unique transaction ID (you can customize this as needed)
-		transactionId := "TXN" + strconv.FormatInt(time.Now().UnixMilli(), 10) + "." + v.RequestId
+	if service, err := models.GetServicesByCode(v.ServiceCode); err == nil {
+		if status, err := models.GetStatusByName(v.Status); err == nil {
+			// Generate a unique transaction ID (you can customize this as needed)
+			transactionId := "TXN" + strconv.FormatInt(time.Now().UnixMilli(), 10) + "." + v.RequestId
 
-		trx_transaction := models.Trx_transactions{
-			TransactionId:          transactionId,
-			Amount:                 v.Amount,
-			TotalDebitAmount:       v.TotalDebitAmount,
-			Charge:                 v.Charge,
-			Commission:             v.Commission,
-			SenderAccountNumber:    v.SenderAccountNumber,
-			RecipientAccountNumber: v.RecipientAccountNumber,
-			TransferCode:           v.TransferCode,
-			ResponseCode:           "",
-			ResponseMessage:        "",
-			CreatedBy:              1,
-			ModifiedBy:             1,
-			Active:                 1,
-			Status:                 status,
-		}
-
-		if _, err := models.AddTrx_transactions(&trx_transaction); err == nil {
-			trx_details_id := "TRXDTL" + strconv.FormatInt(time.Now().UnixMilli(), 10) + "." + v.RequestId
-			trx_transactionDetails := models.Trx_transaction_details{
-				Trx_transactionDetailsId: trx_details_id,
-				TransactionDescription:   v.Description,
-				TransactionId:            &trx_transaction,
-				Amount:                   v.Amount,
-				Charge:                   v.Charge,
-				Commission:               v.Commission,
-				Sender:                   v.SenderAccountNumber,
-				Recipient:                v.RecipientAccountNumber,
-				Status:                   status,
-				ResponseCode:             "",
-				RecipientName:            v.RecipientName,
-				DateCreated:              time.Now(),
-				DateModified:             time.Now(),
-				CreatedBy:                1,
-				ModifiedBy:               1,
-				Active:                   1,
+			trx_transaction := models.Trx_transactions{
+				TransactionId:          transactionId,
+				Amount:                 v.Amount,
+				TotalDebitAmount:       v.TotalDebitAmount,
+				Charge:                 v.Charge,
+				Commission:             v.Commission,
+				SenderAccountNumber:    v.SenderAccountNumber,
+				RecipientAccountNumber: v.RecipientAccountNumber,
+				TransferCode:           v.TransferCode,
+				ResponseCode:           "",
+				ResponseMessage:        "",
+				CreatedBy:              1,
+				ModifiedBy:             1,
+				Active:                 1,
+				Status:                 status,
+				Service:                service,
 			}
-			responseCode = 200
-			responseMessage = "Transfer created successfully"
-			result = trx_transaction
 
-			if _, err := models.AddTrx_transaction_details(&trx_transactionDetails); err == nil {
-				// Successfully added transaction details
-				logs.Info("Transaction details added successfully")
-				responseMessage = "Transaction processed successfully"
+			if _, err := models.AddTrx_transactions(&trx_transaction); err == nil {
+				trx_details_id := "TRXDTL" + strconv.FormatInt(time.Now().UnixMilli(), 10) + "." + v.RequestId
+				trx_transactionDetails := models.Trx_transaction_details{
+					Trx_transactionDetailsId: trx_details_id,
+					TransactionDescription:   v.Description,
+					TransactionId:            &trx_transaction,
+					Amount:                   v.Amount,
+					Charge:                   v.Charge,
+					Commission:               v.Commission,
+					Sender:                   v.SenderAccountNumber,
+					Recipient:                v.RecipientAccountNumber,
+					Status:                   status,
+					ResponseCode:             "",
+					RecipientName:            v.RecipientName,
+					DateCreated:              time.Now(),
+					DateModified:             time.Now(),
+					CreatedBy:                1,
+					ModifiedBy:               1,
+					Active:                   1,
+				}
+				responseCode = 200
+				responseMessage = "Transfer created successfully"
+				result = trx_transaction
+
+				if _, err := models.AddTrx_transaction_details(&trx_transactionDetails); err == nil {
+					// Successfully added transaction details
+					logs.Info("Transaction details added successfully")
+					responseMessage = "Transaction processed successfully"
+				} else {
+					// Handle error adding transaction details
+					responseMessage = "Transfer partially processed: " + err.Error()
+					logs.Error("Error adding transaction details: %v", err)
+				}
+
+				// Send commission to commission wallet
 			} else {
-				// Handle error adding transaction details
-				responseMessage = "Transfer partially processed: " + err.Error()
-				logs.Error("Error adding transaction details: %v", err)
+				responseCode = 500
+				responseMessage = "Error creating transfer: " + err.Error()
 			}
-
-			// Send commission to commission wallet
 		} else {
-			responseCode = 500
-			responseMessage = "Error creating transfer: " + err.Error()
+			logs.Error("Status not found: %v", err)
+			responseCode = 404
+			responseMessage = "Status not found: " + err.Error()
 		}
 	}
 
