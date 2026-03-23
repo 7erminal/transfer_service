@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
+	"strings"
 	"time"
 
 	apiservices "transfer_service/controllers/api_services"
@@ -241,9 +243,76 @@ func (c *TransferController) GetOne() {
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
 // @Success 200 {object} models.Transfer
 // @Failure 403
-// @router / [get]
+// @router /transactions [get]
 func (c *TransferController) GetAll() {
+	var fields []string
+	var sortby []string
+	var order []string
+	var query = make(map[string]string)
+	var limit int64 = 100
+	var offset int64
 
+	statusCode := 400
+	statusDesc := "Bad Request"
+	transactions := []models.Trx_transactions{}
+
+	// fields: col1,col2,entity.col3
+	if v := c.GetString("fields"); v != "" {
+		fields = strings.Split(v, ",")
+	}
+	// limit: 10 (default is 10)
+	if v, err := c.GetInt64("limit"); err == nil {
+		limit = v
+	}
+	// offset: 0 (default is 0)
+	if v, err := c.GetInt64("offset"); err == nil {
+		offset = v
+	}
+	// sortby: col1,col2
+	if v := c.GetString("sortby"); v != "" {
+		sortby = strings.Split(v, ",")
+	}
+	// order: desc,asc
+	if v := c.GetString("order"); v != "" {
+		order = strings.Split(v, ",")
+	}
+	// query: k:v,k:v
+	if v := c.GetString("query"); v != "" {
+		for _, cond := range strings.Split(v, ",") {
+			kv := strings.SplitN(cond, ":", 2)
+			if len(kv) != 2 {
+				c.Data["json"] = errors.New("Error: invalid query key/value pair")
+				c.ServeJSON()
+				return
+			}
+			k, v := kv[0], kv[1]
+			query[k] = v
+		}
+	}
+
+	l, err := models.GetAllTrx_transactions(query, fields, sortby, order, offset, limit)
+	if err != nil {
+		logs.Error("Error fetching transactions: %v", err)
+		statusCode = 404
+		statusDesc = "Not Found: " + err.Error()
+	} else {
+		for _, trxs := range l {
+			m := trxs.(models.Trx_transactions)
+
+			transactions = append(transactions, m)
+		}
+
+		statusCode = 200
+		statusDesc = "OK"
+	}
+
+	resp := responses.TransactionsResponseDTO{
+		StatusCode: statusCode,
+		StatusDesc: statusDesc,
+		Result:     &transactions,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
 }
 
 // Put ...

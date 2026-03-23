@@ -31,3 +31,9 @@ type TransferResponseDTO struct {
 	StatusDesc string                   `json:"statusDesc"`
 	Result     *models.Trx_transactions `json:"result"`
 }
+
+type TransactionsResponseDTO struct {
+	StatusCode int                        `json:"success"`
+	StatusDesc string                     `json:"statusDesc"`
+	Result     *[]models.Trx_transactions `json:"result"`
+}
