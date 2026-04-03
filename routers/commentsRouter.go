@@ -72,15 +72,6 @@ func init() {
 
     beego.GlobalControllerRouter["transfer_service/controllers:TransferController"] = append(beego.GlobalControllerRouter["transfer_service/controllers:TransferController"],
         beego.ControllerComments{
-            Method: "GetAll",
-            Router: `/`,
-            AllowHTTPMethods: []string{"get"},
-            MethodParams: param.Make(),
-            Filters: nil,
-            Params: nil})
-
-    beego.GlobalControllerRouter["transfer_service/controllers:TransferController"] = append(beego.GlobalControllerRouter["transfer_service/controllers:TransferController"],
-        beego.ControllerComments{
             Method: "GetOne",
             Router: `/:id`,
             AllowHTTPMethods: []string{"get"},
@@ -102,6 +93,15 @@ func init() {
             Method: "Delete",
             Router: `/:id`,
             AllowHTTPMethods: []string{"delete"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["transfer_service/controllers:TransferController"] = append(beego.GlobalControllerRouter["transfer_service/controllers:TransferController"],
+        beego.ControllerComments{
+            Method: "GetAll",
+            Router: `/transactions`,
+            AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
