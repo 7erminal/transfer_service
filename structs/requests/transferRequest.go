@@ -21,6 +21,7 @@ type TransferRequest struct {
 	RecipientName          string
 	Status                 string
 	ServiceCode            string
+	TransactionBy          string
 }
 
 type TransferCommissionRequest struct {
@@ -36,6 +37,7 @@ type TransferCommissionRequest struct {
 	Description            string
 	RecipientName          string
 	Status                 string
+	TransactionBy          string
 }
 
 type TransferCallbackRequest struct {

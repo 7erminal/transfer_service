@@ -51,6 +51,7 @@ func (c *TransferController) Post() {
 			// Generate a unique transaction ID (you can customize this as needed)
 			transactionId := "TXN" + strconv.FormatInt(time.Now().UnixMilli(), 10) + "." + v.RequestId
 
+			transactionByInt, _ := strconv.Atoi(v.TransactionBy)
 			trx_transaction := models.Trx_transactions{
 				TransactionId:          transactionId,
 				Amount:                 v.Amount,
@@ -62,8 +63,8 @@ func (c *TransferController) Post() {
 				TransferCode:           v.TransferCode,
 				ResponseCode:           "",
 				ResponseMessage:        "",
-				CreatedBy:              1,
-				ModifiedBy:             1,
+				CreatedBy:              transactionByInt,
+				ModifiedBy:             transactionByInt,
 				Active:                 1,
 				Status:                 status,
 				Service:                service,
