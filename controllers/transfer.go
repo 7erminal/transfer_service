@@ -67,6 +67,8 @@ func (c *TransferController) Post() {
 				Active:                 1,
 				Status:                 status,
 				Service:                service,
+				DateCreated:            time.Now(),
+				DateModified:           time.Now(),
 			}
 
 			if _, err := models.AddTrx_transactions(&trx_transaction); err == nil {
