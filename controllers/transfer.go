@@ -47,6 +47,7 @@ func (c *TransferController) Post() {
 	result := models.Trx_transactions{}
 
 	logs.Info("Request received...")
+	logs.Info("Request received: %v", string(c.Ctx.Input.RequestBody))
 
 	if service, err := models.GetServicesByCode(v.ServiceCode); err == nil {
 		if status, err := models.GetStatusByName(v.Status); err == nil {
@@ -120,6 +121,10 @@ func (c *TransferController) Post() {
 			responseCode = 404
 			responseMessage = "Status not found: " + err.Error()
 		}
+	} else {
+		logs.Error("Service not found: %v", err)
+		responseCode = 404
+		responseMessage = "Service not found: " + err.Error()
 	}
 
 	resp := responses.TransferResponseDTO{
