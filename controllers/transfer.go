@@ -46,6 +46,8 @@ func (c *TransferController) Post() {
 	responseMessage := "Error processing request"
 	result := models.Trx_transactions{}
 
+	logs.Info("Request received...")
+
 	if service, err := models.GetServicesByCode(v.ServiceCode); err == nil {
 		if status, err := models.GetStatusByName(v.Status); err == nil {
 			// Generate a unique transaction ID (you can customize this as needed)
@@ -102,12 +104,14 @@ func (c *TransferController) Post() {
 					responseMessage = "Transaction processed successfully"
 				} else {
 					// Handle error adding transaction details
+					logs.Error("Error adding transaction details ", err)
 					responseMessage = "Transfer partially processed: " + err.Error()
 					logs.Error("Error adding transaction details: %v", err)
 				}
 
 				// Send commission to commission wallet
 			} else {
+				logs.Error("Error creating transfer ", err)
 				responseCode = 500
 				responseMessage = "Error creating transfer: " + err.Error()
 			}
